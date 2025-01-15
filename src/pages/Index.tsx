@@ -44,25 +44,21 @@ const Index = () => {
     const from = fromDate.toISOString().split("T")[0];
     const url = `https://newsapi.org/v2/everything?q=${query}&from=${from}&sortBy=publishedAt&apiKey=${API_KEY}`;
     
-    try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        const errorData = await response.json();
-        if (response.status === 426) {
-          toast({
-            title: "API Limitation",
-            description: "This API only works on localhost in development mode. Please run the app locally.",
-            variant: "destructive",
-          });
-        }
-        throw new Error(errorData.message || "Failed to fetch news");
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    if (!response.ok) {
+      if (response.status === 426) {
+        toast({
+          title: "API Limitation",
+          description: "This API only works on localhost in development mode. Please run the app locally.",
+          variant: "destructive",
+        });
       }
-      const data = await response.json();
-      return data.articles;
-    } catch (error) {
-      console.error("Error fetching news:", error);
-      throw error;
+      throw new Error(data.message || "Failed to fetch news");
     }
+    
+    return data.articles;
   };
 
   const { data: articles, isLoading, error } = useQuery({
