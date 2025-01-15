@@ -5,6 +5,14 @@ import NewsCard from "../components/NewsCard";
 import DateFilter from "../components/DateFilter";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 const CATEGORIES = [
   "Tecnologia",
@@ -18,21 +26,12 @@ const CATEGORIES = [
 ];
 
 const API_KEY = "10afe1bd055f4c07b8e7b07beb51b5a1";
-
-interface NewsArticle {
-  title: string;
-  description: string;
-  urlToImage: string;
-  url: string;
-  source: {
-    name: string;
-  };
-  publishedAt: string;
-}
+const ITEMS_PER_PAGE = 9;
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [selectedCategory, setSelectedCategory] = React.useState("Tecnologia");
+  const [currentPage, setCurrentPage] = React.useState(1);
   const [fromDate, setFromDate] = React.useState(() => {
     const date = new Date();
     date.setDate(date.getDate() - 4);
@@ -74,11 +73,24 @@ const Index = () => {
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     setSelectedCategory("");
+    setCurrentPage(1);
   };
 
   const handleCategorySelect = (category: string) => {
     setSelectedCategory(category);
     setSearchQuery("");
+    setCurrentPage(1);
+  };
+
+  // Pagination logic
+  const totalPages = articles ? Math.ceil(articles.length / ITEMS_PER_PAGE) : 0;
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentArticles = articles?.slice(startIndex, endIndex);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -110,7 +122,7 @@ const Index = () => {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-          {articles?.map((article: NewsArticle, index: number) => (
+          {currentArticles?.map((article: any, index: number) => (
             <NewsCard
               key={`${article.url}-${index}`}
               title={article.title}
@@ -122,6 +134,53 @@ const Index = () => {
             />
           ))}
         </div>
+
+        {totalPages > 1 && (
+          <div className="mt-8">
+            <Pagination>
+              <PaginationContent>
+                {currentPage > 1 && (
+                  <PaginationItem>
+                    <PaginationPrevious 
+                      href="#" 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handlePageChange(currentPage - 1);
+                      }} 
+                    />
+                  </PaginationItem>
+                )}
+                
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handlePageChange(page);
+                      }}
+                      isActive={currentPage === page}
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+
+                {currentPage < totalPages && (
+                  <PaginationItem>
+                    <PaginationNext 
+                      href="#" 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handlePageChange(currentPage + 1);
+                      }} 
+                    />
+                  </PaginationItem>
+                )}
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
       </div>
     </div>
   );
