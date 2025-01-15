@@ -21,7 +21,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Settings } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 const CATEGORIES = [
   "Tecnologia",
@@ -34,13 +35,14 @@ const CATEGORIES = [
   "Economia",
 ];
 
-const API_KEY = "10afe1bd055f4c07b8e7b07beb51b5a1";
 const ITEMS_PER_PAGE = 9;
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [selectedCategory, setSelectedCategory] = React.useState("Tecnologia");
   const [currentPage, setCurrentPage] = React.useState(1);
+  const [apiToken, setApiToken] = React.useState(() => localStorage.getItem("newsApiToken") || "");
+  const [showConfig, setShowConfig] = React.useState(!apiToken);
   const [fromDate, setFromDate] = React.useState(() => {
     const date = new Date();
     date.setDate(date.getDate() - 4);
@@ -48,9 +50,14 @@ const Index = () => {
   });
 
   const fetchNews = async () => {
+    if (!apiToken) {
+      setShowConfig(true);
+      throw new Error("API Token não configurado");
+    }
+    
     const query = searchQuery || selectedCategory;
     const from = fromDate.toISOString().split("T")[0];
-    const url = `https://newsapi.org/v2/everything?q=${query}&from=${from}&sortBy=publishedAt&apiKey=${API_KEY}`;
+    const url = `https://newsapi.org/v2/everything?q=${query}&from=${from}&sortBy=publishedAt&apiKey=${apiToken}`;
     
     const response = await fetch(url);
     
@@ -73,10 +80,10 @@ const Index = () => {
   };
 
   const { data: articles, isLoading, error } = useQuery({
-    queryKey: ["news", searchQuery, selectedCategory, fromDate],
+    queryKey: ["news", searchQuery, selectedCategory, fromDate, apiToken],
     queryFn: fetchNews,
-    staleTime: 4 * 60 * 60 * 1000, // 4 hours
-    gcTime: 4 * 60 * 60 * 1000, // 4 hours
+    staleTime: 4 * 60 * 60 * 1000,
+    gcTime: 4 * 60 * 60 * 1000,
   });
 
   const handleSearch = (query: string) => {
@@ -89,6 +96,13 @@ const Index = () => {
     setSelectedCategory(category);
     setSearchQuery("");
     setCurrentPage(1);
+  };
+
+  const handleApiTokenSave = (token: string) => {
+    setApiToken(token);
+    localStorage.setItem("newsApiToken", token);
+    setShowConfig(false);
+    window.location.reload();
   };
 
   // Pagination logic
@@ -107,40 +121,43 @@ const Index = () => {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold text-center text-primary">News Explorer</h1>
-          <Dialog>
+          <Dialog open={showConfig} onOpenChange={setShowConfig}>
             <DialogTrigger asChild>
-              <Button variant="outline">Contato do Desenvolvedor</Button>
+              <Button variant="outline" className="gap-2">
+                <Settings size={16} />
+                Configurações
+              </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-md">
               <DialogHeader>
-                <DialogTitle>Informações de Contato</DialogTitle>
+                <DialogTitle>Configuração da API</DialogTitle>
               </DialogHeader>
               <div className="space-y-4 p-4">
-                <a 
-                  href="https://instagram.com/kaiomacedo_m" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-primary hover:underline"
-                >
-                  <ExternalLink size={16} />
-                  Instagram: @kaiomacedo_m
-                </a>
-                <a 
-                  href="https://github.com/kaiomaced0" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-primary hover:underline"
-                >
-                  <ExternalLink size={16} />
-                  GitHub: kaiomaced0
-                </a>
-                <a 
-                  href="mailto:kaiomm2000@gmail.com"
-                  className="flex items-center gap-2 text-primary hover:underline"
-                >
-                  <ExternalLink size={16} />
-                  Email: kaiomm2000@gmail.com
-                </a>
+                <h3 className="font-semibold">Como obter o token da API:</h3>
+                <ol className="list-decimal list-inside space-y-2">
+                  <li>Acesse <a href="https://newsapi.org/account" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">newsapi.org/account</a></li>
+                  <li>Clique em "Get API Key"</li>
+                  <li>Preencha seu email</li>
+                  <li>Crie uma senha</li>
+                  <li>Selecione "Individual" como tipo de conta</li>
+                  <li>Complete o cadastro</li>
+                  <li>Copie o token gerado</li>
+                </ol>
+                <div className="mt-4">
+                  <label className="block text-sm font-medium mb-2">Token da API:</label>
+                  <Input
+                    type="text"
+                    placeholder="Cole seu token aqui"
+                    value={apiToken}
+                    onChange={(e) => setApiToken(e.target.value)}
+                  />
+                  <Button 
+                    className="mt-4 w-full"
+                    onClick={() => handleApiTokenSave(apiToken)}
+                  >
+                    Salvar Token
+                  </Button>
+                </div>
               </div>
             </DialogContent>
           </Dialog>
@@ -229,6 +246,36 @@ const Index = () => {
             </Pagination>
           </div>
         )}
+
+        <footer className="mt-8 text-center pb-4">
+          <div className="flex flex-col items-center space-y-2">
+            <a 
+              href="https://instagram.com/kaiomacedo_m" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-primary hover:underline"
+            >
+              <ExternalLink size={16} />
+              Instagram: @kaiomacedo_m
+            </a>
+            <a 
+              href="https://github.com/kaiomaced0" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-primary hover:underline"
+            >
+              <ExternalLink size={16} />
+              GitHub: kaiomaced0
+            </a>
+            <a 
+              href="mailto:kaiomm2000@gmail.com"
+              className="flex items-center gap-2 text-primary hover:underline"
+            >
+              <ExternalLink size={16} />
+              Email: kaiomm2000@gmail.com
+            </a>
+          </div>
+        </footer>
       </div>
     </div>
   );
