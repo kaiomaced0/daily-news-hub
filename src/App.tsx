@@ -5,7 +5,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 4 * 60 * 60 * 1000, // 4 hours
+      cacheTime: 4 * 60 * 60 * 1000, // 4 hours
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>

@@ -1,11 +1,114 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import React from "react";
+import SearchBar from "../components/SearchBar";
+import CategoryPills from "../components/CategoryPills";
+import NewsCard from "../components/NewsCard";
+import DateFilter from "../components/DateFilter";
+import { useQuery } from "@tanstack/react-query";
+
+const CATEGORIES = [
+  "Tecnologia",
+  "Brasil",
+  "Culinária",
+  "Política",
+  "Cinema",
+  "Esportes",
+  "Ciência",
+  "Economia",
+];
+
+const API_KEY = "10afe1bd055f4c07b8e7b07beb51b5a1";
+
+interface NewsArticle {
+  title: string;
+  description: string;
+  urlToImage: string;
+  url: string;
+  source: {
+    name: string;
+  };
+  publishedAt: string;
+}
 
 const Index = () => {
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [selectedCategory, setSelectedCategory] = React.useState("Tecnologia");
+  const [fromDate, setFromDate] = React.useState(() => {
+    const date = new Date();
+    date.setDate(date.getDate() - 4);
+    return date;
+  });
+
+  const fetchNews = async () => {
+    const query = searchQuery || selectedCategory;
+    const from = fromDate.toISOString().split("T")[0];
+    const url = `https://newsapi.org/v2/everything?q=${query}&from=${from}&sortBy=publishedAt&apiKey=${API_KEY}`;
+    
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error("Failed to fetch news");
+    }
+    const data = await response.json();
+    return data.articles;
+  };
+
+  const { data: articles, isLoading, error } = useQuery({
+    queryKey: ["news", searchQuery, selectedCategory, fromDate],
+    queryFn: fetchNews,
+    staleTime: 4 * 60 * 60 * 1000, // 4 hours
+    cacheTime: 4 * 60 * 60 * 1000, // 4 hours
+  });
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    setSelectedCategory("");
+  };
+
+  const handleCategorySelect = (category: string) => {
+    setSelectedCategory(category);
+    setSearchQuery("");
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <div className="min-h-screen p-4 md:p-8">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-4xl font-bold text-center mb-8 text-primary">News Explorer</h1>
+        
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+          <SearchBar onSearch={handleSearch} />
+          <DateFilter date={fromDate} onDateChange={setFromDate} />
+        </div>
+
+        <CategoryPills
+          categories={CATEGORIES}
+          onSelectCategory={handleCategorySelect}
+          selectedCategory={selectedCategory}
+        />
+
+        {isLoading && (
+          <div className="text-center py-8">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          </div>
+        )}
+
+        {error && (
+          <div className="text-center py-8 text-red-500">
+            Failed to load news. Please try again later.
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+          {articles?.map((article: NewsArticle, index: number) => (
+            <NewsCard
+              key={`${article.url}-${index}`}
+              title={article.title}
+              description={article.description}
+              imageUrl={article.urlToImage}
+              url={article.url}
+              source={article.source.name}
+              publishedAt={article.publishedAt}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
