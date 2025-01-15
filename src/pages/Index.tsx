@@ -35,7 +35,7 @@ const CATEGORIES = [
   "Economia",
 ];
 
-const ITEMS_PER_PAGE = 9;
+const ITEMS_PER_PAGE = 30;
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = React.useState("");

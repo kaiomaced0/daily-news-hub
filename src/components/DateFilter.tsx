@@ -19,7 +19,7 @@ const DateFilter = ({ date, onDateChange }: DateFilterProps) => {
       <PopoverTrigger asChild>
         <Button variant="outline" className="gap-2">
           <Calendar className="h-4 w-4" />
-          From: {date.toLocaleDateString()}
+          Desde: {date.toLocaleDateString()}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">

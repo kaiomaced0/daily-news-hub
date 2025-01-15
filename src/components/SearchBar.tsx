@@ -8,7 +8,7 @@ interface SearchBarProps {
   placeholder?: string;
 }
 
-const SearchBar = ({ onSearch, placeholder = "Search for news..." }: SearchBarProps) => {
+const SearchBar = ({ onSearch, placeholder = "Pesquise por noticias..." }: SearchBarProps) => {
   const [query, setQuery] = React.useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -29,7 +29,7 @@ const SearchBar = ({ onSearch, placeholder = "Search for news..." }: SearchBarPr
       />
       <Button type="submit" className="bg-primary text-primary-foreground hover:opacity-90">
         <Search className="h-4 w-4 mr-2" />
-        Search
+        Pesquisar
       </Button>
     </form>
   );
