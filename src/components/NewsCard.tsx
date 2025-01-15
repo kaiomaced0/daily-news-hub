@@ -11,12 +11,13 @@ interface NewsCardProps {
 }
 
 const NewsCard = ({ title, description, imageUrl, url, source, publishedAt }: NewsCardProps) => {
+  const [showImage, setShowImage] = React.useState(!!imageUrl);
   const date = new Date(publishedAt).toLocaleDateString();
 
   return (
     <a href={url} target="_blank" rel="noopener noreferrer" className="block">
       <Card className="news-card h-full">
-        {imageUrl && (
+        {imageUrl && showImage && (
           <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
             <img
               src={imageUrl}
@@ -24,7 +25,9 @@ const NewsCard = ({ title, description, imageUrl, url, source, publishedAt }: Ne
               className="object-cover w-full h-full"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
-                target.src = "/placeholder.svg";
+                if (target.src !== "/placeholder.svg") {
+                  setShowImage(false);
+                }
               }}
             />
           </div>
