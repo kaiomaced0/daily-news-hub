@@ -4,7 +4,7 @@ import CategoryPills from "../components/CategoryPills";
 import NewsCard from "../components/NewsCard";
 import DateFilter from "../components/DateFilter";
 import { useQuery } from "@tanstack/react-query";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 
 const CATEGORIES = [
   "Tecnologia",
@@ -45,16 +45,19 @@ const Index = () => {
     const url = `https://newsapi.org/v2/everything?q=${query}&from=${from}&sortBy=publishedAt&apiKey=${API_KEY}`;
     
     const response = await fetch(url);
+    
+    if (response.status === 426) {
+      toast({
+        title: "API Limitation",
+        description: "This API only works on localhost in development mode. Please run the app locally.",
+        variant: "destructive",
+      });
+      throw new Error("API only works on localhost in development mode");
+    }
+
     const data = await response.json();
     
     if (!response.ok) {
-      if (response.status === 426) {
-        toast({
-          title: "API Limitation",
-          description: "This API only works on localhost in development mode. Please run the app locally.",
-          variant: "destructive",
-        });
-      }
       throw new Error(data.message || "Failed to fetch news");
     }
     
