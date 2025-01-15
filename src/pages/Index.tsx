@@ -13,6 +13,15 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { ExternalLink } from "lucide-react";
 
 const CATEGORIES = [
   "Tecnologia",
@@ -96,7 +105,46 @@ const Index = () => {
   return (
     <div className="min-h-screen p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-8 text-primary">News Explorer</h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-4xl font-bold text-center text-primary">News Explorer</h1>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">Contato do Desenvolvedor</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Informações de Contato</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 p-4">
+                <a 
+                  href="https://instagram.com/kaiomacedo_m" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-primary hover:underline"
+                >
+                  <ExternalLink size={16} />
+                  Instagram: @kaiomacedo_m
+                </a>
+                <a 
+                  href="https://github.com/kaiomaced0" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-primary hover:underline"
+                >
+                  <ExternalLink size={16} />
+                  GitHub: kaiomaced0
+                </a>
+                <a 
+                  href="mailto:kaiomm2000@gmail.com"
+                  className="flex items-center gap-2 text-primary hover:underline"
+                >
+                  <ExternalLink size={16} />
+                  Email: kaiomm2000@gmail.com
+                </a>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
         
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
           <SearchBar onSearch={handleSearch} />
