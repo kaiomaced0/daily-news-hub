@@ -1,69 +1,119 @@
-# Welcome to your Lovable project
+# Daily News
 
-## Project info
+**Daily News** é um site de notícias desenvolvido com [React](https://reactjs.org/), que utiliza a API [newsapi.org](https://newsapi.org/) para obter e exibir as notícias mais recentes. Este projeto é ideal para aprendizado e consumo de dados de APIs externas.
 
-**URL**: https://lovable.dev/projects/211f7a38-b6d3-454c-87f0-f331aff986ea
+## Requisitos
 
-## How can I edit this code?
+- **Node.js** (versão 16 ou superior)
+- Gerenciador de pacotes: `npm` ou `yarn`
 
-There are several ways of editing your application.
+Se o Node.js ainda não estiver instalado, siga as instruções abaixo para instalá-lo.
 
-**Use Lovable**
+## Instalação do Node.js
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/211f7a38-b6d3-454c-87f0-f331aff986ea) and start prompting.
+### Método 1: Instalação manual
 
-Changes made via Lovable will be committed automatically to this repo.
+1. Acesse o site oficial do Node.js: [https://nodejs.org/](https://nodejs.org/)
+2. Baixe a versão LTS recomendada para maior estabilidade.
+3. Siga as instruções de instalação para o seu sistema operacional.
 
-**Use your preferred IDE**
+### Método 2: Usando o Chocolatey (Windows)
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+1. Certifique-se de que o [Chocolatey](https://chocolatey.org/install) está instalado em sua máquina.
+2. Abra o terminal como administrador.
+3. Execute o seguinte comando para instalar o Node.js:
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```bash
+choco install nodejs-lts
 ```
 
-**Edit a file directly in GitHub**
+4. Após a instalação, reinicie o terminal para garantir que as variáveis de ambiente foram configuradas corretamente.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Para verificar se o Node.js foi instalado corretamente, execute o seguinte comando no terminal:
 
-**Use GitHub Codespaces**
+```bash
+node -v
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Você deve ver a versão instalada do Node.js. Certifique-se também de que o `npm` foi instalado:
 
-## What technologies are used for this project?
+```bash
+npm -v
+```
 
-This project is built with .
+## Configuração do Projeto
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+1. Clone este repositório:
 
-## How can I deploy this project?
+```bash
+git clone https://github.com/kaiomaced0/daily-news-hub.git
+```
 
-Simply open [Lovable](https://lovable.dev/projects/211f7a38-b6d3-454c-87f0-f331aff986ea) and click on Share -> Publish.
+2. Navegue até o diretório do projeto:
 
-## I want to use a custom domain - is that possible?
+```bash
+cd daily-news
+```
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+3. Instale as dependências:
+
+```bash
+npm install
+```
+
+ou, se preferir o `yarn`:
+
+```bash
+yarn install
+```
+
+4. Configure o acesso à API do [newsapi.org](https://newsapi.org/):
+
+   - Acesse [https://newsapi.org/register](https://newsapi.org/register) para criar uma conta e gerar seu token de acesso.
+   - Substitua `<YOUR_API_KEY>` no arquivo `.env.local` pelo token gerado. Crie este arquivo no diretório raiz do projeto, se ainda não existir:
+
+   ```env
+   REACT_APP_NEWS_API_KEY=<YOUR_API_KEY>
+   ```
+
+5. Certifique-se de que a aplicação será executada em `localhost`, pois a API está limitada com CORS para este domínio.
+
+## Executando o Projeto
+
+1. Inicie o servidor de desenvolvimento:
+
+```bash
+npm start
+```
+
+ou:
+
+```bash
+yarn start
+```
+
+2. Abra o navegador e acesse [http://localhost:3000](http://localhost:3000).
+
+## Funcionalidades
+
+- Exibição das principais notícias em várias categorias.
+- Redirecionamento do usuário para registro no [newsapi.org](https://newsapi.org/) para obter um token de acesso.
+- Interface simples e intuitiva.
+
+## Tecnologias Utilizadas
+
+- [React](https://reactjs.org/)
+- [newsapi.org](https://newsapi.org/)
+- CSS/SCSS para estilização
+
+## Problemas Conhecidos
+
+- A API está limitada para uso apenas em `localhost` devido às restrições de CORS do plano gratuito da newsapi.
+
+## Contribuindo
+
+Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou enviar pull requests.
+
+---
+
+Feito com por Kaio Macedo (https://github.com/kaiomaced0).
